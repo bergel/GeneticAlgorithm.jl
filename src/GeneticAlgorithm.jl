@@ -7,7 +7,7 @@ module GeneticAlgorithm
 
 export plusTwo
 export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual, mutateAtIndex
-export run
+export runGA
 
 using Test
 using Random
@@ -160,10 +160,10 @@ This is the main function of the genetic algorithm.
 # Examples
 
 ```julia
-julia> run(maxNumberOfIterations=40)
+julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function run(;maxNumberOfIterations=10, probMutation=0.2)
+function runGA(;maxNumberOfIterations=10, probMutation=0.2)
     population = createPopulation()
     numberOfIndividuals = length(population)
     fitnesses = []
@@ -207,3 +207,5 @@ julia> five = plusTwo(3)
 plusTwo(x) = return x + 2
 
 end # module
+
+GeneticAlgorithm.runGA(maxNumberOfIterations=40)
