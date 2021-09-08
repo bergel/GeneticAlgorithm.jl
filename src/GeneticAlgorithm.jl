@@ -6,7 +6,7 @@ a wide range of problems that are hard to solve using brute-force.
 module GeneticAlgorithm
 
 export plusTwo
-export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual
+export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual, mutateAtIndex
 export run
 
 using Test
