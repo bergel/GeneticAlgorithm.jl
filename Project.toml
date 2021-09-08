@@ -1,0 +1,7 @@
+name = "GeneticAlgorithm"
+uuid = "594a8549-b063-44dd-a845-3719d86d0ee6"
+authors = ["Alexandre Bergel <alexandre.bergel@me.com>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
