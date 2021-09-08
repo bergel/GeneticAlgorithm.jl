@@ -1,10 +1,10 @@
-module GeneticAlgorithm
-
 """
 Genetic algorithm is a search algorithm, which a computational
 metaphor of the natural evolution. Genetic algorithm is useful to solve
 a wide range of problems that are hard to solve using brute-force.
 """
+module GeneticAlgorithm
+
 export plusTwo
 export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual
 export run
@@ -15,7 +15,6 @@ using Random
 # To make everything reproducible
 Random.seed!(42)
 
-# Create a gene value
 """
     createGene()
 
