@@ -6,8 +6,9 @@ a wide range of problems that are hard to solve using brute-force.
 module GeneticAlgorithm
 
 export plusTwo
-export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual, mutateAtIndex
+export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual
 export runGA
+export mutateAtIndex
 
 using Test
 using Random
@@ -74,7 +75,7 @@ function mutate(ind)
 end
 
 """
-    mutate(ind, index)
+    mutateAtIndex(ind, index)
 
 Perform a mutation operation on the provided individual, at a provided index
 """
