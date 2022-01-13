@@ -208,4 +208,4 @@ plusTwo(x) = return x + 2
 
 end # module
 
-GeneticAlgorithm.runGA(maxNumberOfIterations=40)
+#GeneticAlgorithm.runGA(maxNumberOfIterations=40)
