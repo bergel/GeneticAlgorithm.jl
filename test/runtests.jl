@@ -7,3 +7,8 @@ using Test, GeneticAlgorithm
 
 include("runtests_example01.jl")
 include("runtests_example02.jl")
+
+msg = "!! ALL DONE !!"
+printstyled("-" ^ length(msg), color=:green)
+printstyled(msg, color=:green)
+printstyled("-" ^ length(msg), color=:green)
