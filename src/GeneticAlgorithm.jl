@@ -8,6 +8,7 @@ module GeneticAlgorithm
 export crossoverAtIndex, pickBestIndividual, selectIndividual
 export runGA
 export mutateAtIndex
+export gaLog
 
 using Random
 
@@ -106,6 +107,9 @@ function selectIndividual(fitness, population; k=5)
     return pickBestIndividual(fitness, selectedIndividuals)
 end
 
+function gaLog(aString::String)
+    printstyled(aString, color=:blue)
+end
 
 """
     run(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
@@ -124,6 +128,7 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
     numberOfIndividuals = length(population)
     fitnesses = []
     for iteration in 1:maxNumberOfIterations
+        gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ")
         newPopulation = []
         for it in 1:numberOfIndividuals
             ind1 = selectIndividual(fitness, population)
@@ -135,7 +140,9 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
             push!(newPopulation, newIndividual)
         end
         population = newPopulation
-        push!(fitnesses, bestFitnessOf(fitness, population))
+        bestFitness = bestFitnessOf(fitness, population)
+        push!(fitnesses, bestFitness)
+        gaLog("end (best fitness = $(bestFitness))\n")
     end
     return pickBestIndividual(fitness, population), fitnesses
 end
