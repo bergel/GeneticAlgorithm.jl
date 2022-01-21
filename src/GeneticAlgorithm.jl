@@ -5,12 +5,10 @@ a wide range of problems that are hard to solve using brute-force.
 """
 module GeneticAlgorithm
 
-export plusTwo
 export crossoverAtIndex, pickBestIndividual, selectIndividual
 export runGA
 export mutateAtIndex
 
-using Test
 using Random
 
 """
