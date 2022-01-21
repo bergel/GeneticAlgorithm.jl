@@ -1,4 +1,7 @@
 using Test, GeneticAlgorithm
+using Random
+
+Random.seed!(42)
 
 """
 createGene()
