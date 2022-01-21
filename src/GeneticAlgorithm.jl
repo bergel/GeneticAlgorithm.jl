@@ -13,9 +13,6 @@ export mutateAtIndex
 using Test
 using Random
 
-# To make everything reproducible
-Random.seed!(42)
-
 """
     createGene()
 
@@ -154,7 +151,7 @@ end
 
 
 """
-    run(;maxNumberOfIterations=10, probMutation=0.2)
+    run(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
 
 This is the main function of the genetic algorithm.
 
@@ -164,7 +161,8 @@ This is the main function of the genetic algorithm.
 julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function runGA(;maxNumberOfIterations=10, probMutation=0.2)
+function runGA(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
+    Random.seed!(seed)
     population = createPopulation()
     numberOfIndividuals = length(population)
     fitnesses = []

@@ -28,4 +28,4 @@ out = plusTwo(5)
 @test selectIndividual([[3, 2, 1, 4, 5], reverse(collect(1:5)), 1:5]) == 1:5
 @test selectIndividual([[3, 2, 1, 4, 5], reverse(collect(1:5))]) == [3, 2, 1, 4, 5]
 
-@test runGA(maxNumberOfIterations=40)[1] = [1, 2, 3, 4, 5]
+@test runGA(maxNumberOfIterations=200)[1] == [1, 2, 3, 4, 5]
