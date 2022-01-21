@@ -6,7 +6,7 @@ a wide range of problems that are hard to solve using brute-force.
 module GeneticAlgorithm
 
 export plusTwo
-export crossoverAtIndex, checkIfSimilar, fitness, pickBestIndividual, selectIndividual
+export crossoverAtIndex, pickBestIndividual, selectIndividual
 export runGA
 export mutateAtIndex
 
@@ -14,21 +14,12 @@ using Test
 using Random
 
 """
-    createGene()
-
-Create a gene value
-"""
-function createGene() 
-    return floor(Int, rand() * 10)
-end
-
-"""
     createIndividual() 
 
 Create an individual
 """
-function createIndividual() 
-    return [createGene() for i in 1:5]
+function createIndividual(createGene, numberOfGenes) 
+    return [createGene() for i in 1:numberOfGenes]
 end
 
 """
@@ -36,8 +27,8 @@ end
 
 Create population
 """
-function createPopulation() 
-    return [createIndividual() for i in 1:10]
+function createPopulation(createGene, numberOfGenes) 
+    return [createIndividual(createGene, numberOfGenes) for i in 1:10]
 end
 
 """
@@ -65,10 +56,10 @@ end
 
 Perform a mutation operation on the provided individual
 """
-function mutate(ind)
+function mutate(createGene, ind)
     size = length(ind)
     randomIndex = floor(Int64, rand() * size + 1)
-    return mutateAtIndex(ind, randomIndex)
+    return mutateAtIndex(createGene, ind, randomIndex)
 end
 
 """
@@ -76,48 +67,18 @@ end
 
 Perform a mutation operation on the provided individual, at a provided index
 """
-function mutateAtIndex(ind, index)
+function mutateAtIndex(createGene, ind, index)
     t = copy(ind)
     t[index] = createGene()
     return t
 end
 
 """
-    checkIfSimilar(ind1, ind2)
-
-Return true if the two individuals are the same, expect with a mutation at a particular index.
-This function is particularly useful for testing.
-"""
-function checkIfSimilar(ind1, ind2)
-    pairs = collect(zip(ind1, ind2))
-    # the predicate is the same than t -> first(t) == last(t)
-    allIdentical = filter(((a, b),) -> a == b, pairs)
-    allDifferent = filter(((a, b),) -> a != b, pairs)
-    oneDiff = length(allDifferent) == 1
-    allTheRestTheSame = length(allIdentical) == (length(ind1) - 1)
-    return oneDiff && allTheRestTheSame
-end
-
-
-"""
-    fitness(ind)
-
-The fitness function determines how good an individual is. It returns a number.
-"""
-function fitness(ind)
-    solution = 1:5
-    allDifferent = filter(((a,b),) -> a != b, collect(zip(solution, ind)))
-    return length(allDifferent)
-end
-
-
-
-"""
-    bestFitnessOf(population)
+    bestFitnessOf(fitness, population)
 
 Return the maximum fitness for a given population of individuals
 """
-function bestFitnessOf(population)
+function bestFitnessOf(fitness, population)
     return maximum(map(fitness, population))
 end 
 
@@ -126,27 +87,25 @@ end
 
 Pick best individual of a given population.
 """
-function pickBestIndividual(population)
+function pickBestIndividual(fitness, population)
     indexMaxFitness = argmin(map(fitness, population))
     bestIndividual = population[indexMaxFitness]
     return bestIndividual
 end
-
-
 
 """
     selectIndividual(population; k=5)
 
 Selection using the tournament of size k. Assume that the smallest fitness is the best.
 """
-function selectIndividual(population; k=5)
+function selectIndividual(fitness, population; k=5)
     populationSize = length(population)
     selectedIndividuals = []
     for tmp in 1:k
         anInd = population[floor(Int64, rand()*populationSize) + 1]
         push!(selectedIndividuals, anInd)
     end
-    return pickBestIndividual(selectedIndividuals)
+    return pickBestIndividual(fitness, selectedIndividuals)
 end
 
 
@@ -161,26 +120,26 @@ This is the main function of the genetic algorithm.
 julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function runGA(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
+function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42)
     Random.seed!(seed)
-    population = createPopulation()
+    population = createPopulation(createGene, numberOfGenes)
     numberOfIndividuals = length(population)
     fitnesses = []
     for iteration in 1:maxNumberOfIterations
         newPopulation = []
         for it in 1:numberOfIndividuals
-            ind1 = selectIndividual(population)
-            ind2 = selectIndividual(population)
+            ind1 = selectIndividual(fitness, population)
+            ind2 = selectIndividual(fitness, population)
             newIndividual = crossover(ind1, ind2)
             if (rand() <= probMutation) 
-                newIndividual = mutate(newIndividual)
+                newIndividual = mutate(createGene, newIndividual)
             end
             push!(newPopulation, newIndividual)
         end
         population = newPopulation
-        push!(fitnesses, bestFitnessOf(population))
+        push!(fitnesses, bestFitnessOf(fitness, population))
     end
-    return pickBestIndividual(population), fitnesses
+    return pickBestIndividual(fitness, population), fitnesses
 end
 
 
@@ -206,5 +165,3 @@ julia> five = plusTwo(3)
 plusTwo(x) = return x + 2
 
 end # module
-
-#GeneticAlgorithm.runGA(maxNumberOfIterations=40)
