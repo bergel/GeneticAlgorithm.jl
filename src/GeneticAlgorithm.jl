@@ -107,8 +107,10 @@ function selectIndividual(fitness, population; k=5)
     return pickBestIndividual(fitness, selectedIndividuals)
 end
 
-function gaLog(aString::String)
-    printstyled(aString, color=:blue)
+function gaLog(aString::String, shouldLog=true)
+    if(shouldLog)
+        printstyled(aString, color=:blue)
+    end
 end
 
 """
@@ -122,13 +124,13 @@ This is the main function of the genetic algorithm.
 julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42)
+function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42, logging=true)
     Random.seed!(seed)
     population = createPopulation(createGene, numberOfGenes)
     numberOfIndividuals = length(population)
     fitnesses = []
     for iteration in 1:maxNumberOfIterations
-        gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ")
+        gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ", logging)
         newPopulation = []
         for it in 1:numberOfIndividuals
             ind1 = selectIndividual(fitness, population)
@@ -142,7 +144,7 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
         population = newPopulation
         bestFitness = bestFitnessOf(fitness, population)
         push!(fitnesses, bestFitness)
-        gaLog("end (best fitness = $(bestFitness))\n")
+        gaLog("end (best fitness = $(bestFitness))\n", logging)
     end
     return pickBestIndividual(fitness, population), fitnesses
 end

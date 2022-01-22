@@ -11,4 +11,4 @@ function fitnessExample(ind)
     return length(allDifferent)
 end
 
-@test join(runGA(fitnessExample, createGeneExample, 5, maxNumberOfIterations=200)[1]) == "hello"
+@test join(runGA(fitnessExample, createGeneExample, 5, maxNumberOfIterations=200, logging=false)[1]) == "hello"
