@@ -166,7 +166,7 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
         gaLog("end (best fitness = $(bestFitness), worse fitness= $(worstFitness))\n", logging)
         if(!isempty(filename))
             open(filename * "-individuals/$(iteration).txt", "w") do f
-                write(f, pickBestIndividual(fitness, population))
+                write(f, string(pickBestIndividual(fitness, population)))
             end
         end
     end
