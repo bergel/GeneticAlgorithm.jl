@@ -10,6 +10,8 @@ export runGA
 export mutateAtIndex
 export gaLog
 
+using DataFrames
+using CSV
 using Random
 
 """
@@ -82,6 +84,15 @@ function bestFitnessOf(fitness, population)
 end 
 
 """
+    worseFitnessOf(fitness, population)
+
+Return the worse fitness for a given population of individuals
+"""
+function worseFitnessOf(fitness, population)
+    return minimum(map(fitness, population))
+end 
+
+"""
     pickBestIndividual(population)
 
 Pick best individual of a given population.
@@ -107,9 +118,9 @@ function selectIndividual(fitness, population; k=5)
     return pickBestIndividual(fitness, selectedIndividuals)
 end
 
-function gaLog(aString::String, shouldLog=true)
+function gaLog(aString::String, shouldLog=true; color=:blue)
     if(shouldLog)
-        printstyled(aString, color=:blue)
+        printstyled(aString, color=color)
     end
 end
 
@@ -124,11 +135,13 @@ This is the main function of the genetic algorithm.
 julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42, logging=true)
+function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42, logging=true, filename="")
+    gaLog("BEGINNING - GA commit date 2022-01-23 - 11:33am\n", logging; color=:red)
     Random.seed!(seed)
     population = createPopulation(createGene, numberOfGenes)
     numberOfIndividuals = length(population)
-    fitnesses = []
+    bestFitnesses = []
+    worstFitnesses = []
     for iteration in 1:maxNumberOfIterations
         gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ", logging)
         newPopulation = []
@@ -143,10 +156,16 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
         end
         population = newPopulation
         bestFitness = bestFitnessOf(fitness, population)
-        push!(fitnesses, bestFitness)
-        gaLog("end (best fitness = $(bestFitness))\n", logging)
+        worstFitness = worseFitnessOf(fitness, population)
+        push!(bestFitnesses, bestFitness)
+        push!(worstFitnesses, worstFitness)
+        gaLog("end (best fitness = $(bestFitness), worse fitness= $(worstFitness))\n", logging)
     end
-    return pickBestIndividual(fitness, population), fitnesses
+    if(!isempty(filename))
+        dataFrame = DataFrame(Generation = 1:maxNumberOfIterations, BestFitness = bestFitnesses, WorstFitness = worstFitnesses)
+        CSV.write(filename, dataFrame)
+    end
+    return pickBestIndividual(fitness, population), bestFitnesses
 end
 
 
