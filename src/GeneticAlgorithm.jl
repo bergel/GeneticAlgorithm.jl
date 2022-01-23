@@ -142,6 +142,10 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
     numberOfIndividuals = length(population)
     bestFitnesses = []
     worstFitnesses = []
+    if(!isempty(filename))
+        rm(filename * "-individuals", recursive=true, force=true)
+        mkpath(filename * "-individuals")
+    end
     for iteration in 1:maxNumberOfIterations
         gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ", logging)
         newPopulation = []
@@ -160,9 +164,15 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
         push!(bestFitnesses, bestFitness)
         push!(worstFitnesses, worstFitness)
         gaLog("end (best fitness = $(bestFitness), worse fitness= $(worstFitness))\n", logging)
+        if(!isempty(filename))
+            open(filename * "-individuals/$(iteration).txt", "w") do f
+                write(f, pickBestIndividual(fitness, population))
+            end
+        end
     end
     if(!isempty(filename))
         dataFrame = DataFrame(Generation = 1:maxNumberOfIterations, BestFitness = bestFitnesses, WorstFitness = worstFitnesses)
+        rm(filename, force=true)
         CSV.write(filename, dataFrame)
     end
     return pickBestIndividual(fitness, population), bestFitnesses
