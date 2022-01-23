@@ -80,7 +80,7 @@ end
 Return the maximum fitness for a given population of individuals
 """
 function bestFitnessOf(fitness, population)
-    return maximum(map(fitness, population))
+    return minimum(map(fitness, population))
 end 
 
 """
@@ -89,7 +89,7 @@ end
 Return the worse fitness for a given population of individuals
 """
 function worseFitnessOf(fitness, population)
-    return minimum(map(fitness, population))
+    return maximum(map(fitness, population))
 end 
 
 """
@@ -136,7 +136,7 @@ julia> runGA(maxNumberOfIterations=40)
 ```
 """
 function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42, logging=true, filename="")
-    gaLog("BEGINNING - GA commit date 2022-01-23 - 11:33am\n", logging; color=:red)
+    gaLog("BEGINNING - GA commit date 2022-01-23 - 12:01pm\n", logging; color=:red)
     Random.seed!(seed)
     population = createPopulation(createGene, numberOfGenes)
     numberOfIndividuals = length(population)

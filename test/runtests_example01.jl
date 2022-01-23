@@ -38,7 +38,7 @@ end
 
 numberOfFitnessEvaluation = 0
 @test runGA(fitnessExample, createGeneExample, 5, maxNumberOfIterations=200, logging=false)[1] == [1, 2, 3, 4, 5]
-@test numberOfFitnessEvaluation == 22010
+@test numberOfFitnessEvaluation == 24010
 
 ## Checking cache!!!
 numberOfFitnessEvaluation = 0

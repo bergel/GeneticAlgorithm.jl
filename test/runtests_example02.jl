@@ -1,6 +1,6 @@
 using Test, GeneticAlgorithm
 
-STRING_TO_FIND = "hello"
+STRING_TO_FIND = "hellohellohello"
 
 function createGeneExample() 
     return rand(STRING_TO_FIND)
@@ -11,4 +11,4 @@ function fitnessExample(ind)
     return length(allDifferent)
 end
 
-@test join(runGA(fitnessExample, createGeneExample, 5, maxNumberOfIterations=200, logging=false)[1]) == "hello"
+@test join(runGA(fitnessExample, createGeneExample, length(STRING_TO_FIND), maxNumberOfIterations=10, logging=false)[1]) == "hello"
