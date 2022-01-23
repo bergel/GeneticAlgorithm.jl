@@ -11,4 +11,4 @@ function fitnessExample(ind)
     return length(allDifferent)
 end
 
-@test join(runGA(fitnessExample, createGeneExample, length(STRING_TO_FIND), maxNumberOfIterations=10, logging=false)[1]) == "hello"
+@test join(runGA(fitnessExample, createGeneExample, length(STRING_TO_FIND), maxNumberOfIterations=200, logging=false)[1]) == STRING_TO_FIND
