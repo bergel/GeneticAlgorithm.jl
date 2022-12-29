@@ -124,6 +124,15 @@ function gaLog(aString::String, shouldLog=true; color=:blue)
     end
 end
 
+function default_termination_function(bestFitnesses)
+    return false
+end
+
+function should_continue_evolution(bestFitnesses::Vector{Number}, condition_termination::Function)
+    isempty(bestFitnesses) && return true
+    return !condition_termination(bestFitnesses)
+end
+
 """
     runGA(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
 
@@ -136,27 +145,29 @@ julia> runGA(maxNumberOfIterations=40)
 ```
 """
 function runGA(
-    fitness,
-    createGene,
-    numberOfGenes;
+    fitness::Function,
+    createGene::Function,
+    numberOfGenes::Int64;
 
     maxNumberOfIterations=10,
     probMutation=0.2,
     seed=42,
     logging=true,
-    filename=""
+    filename="",
+    condition_termination::Function=default_termination_function
 )
     gaLog("BEGINNING - GA commit date 2022-01-23 - 15:59pm\n", logging; color=:red)
     Random.seed!(seed)
     population = createPopulation(createGene, numberOfGenes)
     numberOfIndividuals = length(population)
-    bestFitnesses = []
-    worstFitnesses = []
+    bestFitnesses = Number[]
+    worstFitnesses = Number[]
     if(!isempty(filename))
         rm(filename * "-individuals", recursive=true, force=true)
         mkpath(filename * "-individuals")
     end
-    for iteration in 1:maxNumberOfIterations
+    local iteration = 1
+    while (iteration <= maxNumberOfIterations && should_continue_evolution(bestFitnesses, condition_termination))
         gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ", logging)
         newPopulation = []
         for it in 1:numberOfIndividuals
@@ -179,6 +190,7 @@ function runGA(
                 write(f, string(pickBestIndividual(fitness, population)))
             end
         end
+        iteration = iteration + 1
     end
     if(!isempty(filename))
         dataFrame = DataFrame(Generation = 1:maxNumberOfIterations, BestFitness = bestFitnesses, WorstFitness = worstFitnesses)
