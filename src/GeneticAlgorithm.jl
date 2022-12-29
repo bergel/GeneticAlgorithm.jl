@@ -15,26 +15,26 @@ using CSV
 using Random
 
 """
-    createIndividual() 
+    createIndividual()
 
 Create an individual
 """
-function createIndividual(createGene, numberOfGenes) 
+function createIndividual(createGene, numberOfGenes)
     return [createGene() for i in 1:numberOfGenes]
 end
 
 """
-    createPopulation() 
+    createPopulation()
 
 Create population
 """
-function createPopulation(createGene, numberOfGenes) 
+function createPopulation(createGene, numberOfGenes)
     return [createIndividual(createGene, numberOfGenes) for i in 1:10]
 end
 
 """
     crossover(ind1, ind2)
-    
+
 Genetic operation: Crossover
 """
 function crossover(ind1, ind2)
@@ -45,7 +45,7 @@ end
 
 """
     crossover(ind1, ind2, index)
-    
+
 Perform a crossover at a particular index
 """
 function crossoverAtIndex(ind1, ind2, index)
@@ -81,7 +81,7 @@ Return the maximum fitness for a given population of individuals
 """
 function bestFitnessOf(fitness, population)
     return minimum(map(fitness, population))
-end 
+end
 
 """
     worseFitnessOf(fitness, population)
@@ -90,7 +90,7 @@ Return the worse fitness for a given population of individuals
 """
 function worseFitnessOf(fitness, population)
     return maximum(map(fitness, population))
-end 
+end
 
 """
     pickBestIndividual(population)
@@ -125,7 +125,7 @@ function gaLog(aString::String, shouldLog=true; color=:blue)
 end
 
 """
-    run(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
+    runGA(;maxNumberOfIterations=10, probMutation=0.2, seed=42)
 
 This is the main function of the genetic algorithm.
 
@@ -135,7 +135,17 @@ This is the main function of the genetic algorithm.
 julia> runGA(maxNumberOfIterations=40)
 ```
 """
-function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, probMutation=0.2, seed=42, logging=true, filename="")
+function runGA(
+    fitness,
+    createGene,
+    numberOfGenes;
+
+    maxNumberOfIterations=10,
+    probMutation=0.2,
+    seed=42,
+    logging=true,
+    filename=""
+)
     gaLog("BEGINNING - GA commit date 2022-01-23 - 15:59pm\n", logging; color=:red)
     Random.seed!(seed)
     population = createPopulation(createGene, numberOfGenes)
@@ -153,7 +163,7 @@ function runGA(fitness, createGene, numberOfGenes; maxNumberOfIterations=10, pro
             ind1 = selectIndividual(fitness, population)
             ind2 = selectIndividual(fitness, population)
             newIndividual = crossover(ind1, ind2)
-            if (rand() <= probMutation) 
+            if (rand() <= probMutation)
                 newIndividual = mutate(createGene, newIndividual)
             end
             push!(newPopulation, newIndividual)

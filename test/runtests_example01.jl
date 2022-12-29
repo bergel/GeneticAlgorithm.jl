@@ -10,7 +10,7 @@ createGene()
 
 Create a gene value
 """
-function createGeneExample() 
+function createGeneExample()
     return floor(Int, rand() * 10)
 end
 
@@ -54,4 +54,4 @@ function fitnessExampleWithCache(ind)
     return fitnessCache[ind]
 end
 @test runGA(fitnessExampleWithCache, createGeneExample, 5, maxNumberOfIterations=200, logging=false)[1] == [1, 2, 3, 4, 5]
-@test numberOfFitnessEvaluation == 187
+@test numberOfFitnessEvaluation == 158
