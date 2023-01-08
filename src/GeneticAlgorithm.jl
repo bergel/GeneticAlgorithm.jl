@@ -19,8 +19,8 @@ using Random
 
 Create an individual
 """
-function createIndividual(createGene, numberOfGenes)
-    return [createGene() for i in 1:numberOfGenes]
+function createIndividual(createGene::Function, numberOfGenes::Int64)
+    return [createGene(gene_index) for gene_index in 1:numberOfGenes]
 end
 
 """
@@ -28,28 +28,28 @@ end
 
 Create population
 """
-function createPopulation(createGene, numberOfGenes)
-    return [createIndividual(createGene, numberOfGenes) for i in 1:10]
+function createPopulation(population_size::Int64, gene_factory::Function, numberOfGenes::Int64)
+    return [createIndividual(gene_factory, numberOfGenes) for i in 1:population_size]
 end
 
 """
-    crossover(ind1, ind2)
+    crossover(index1, index2)
 
 Genetic operation: Crossover
 """
-function crossover(ind1, ind2)
-    size = length(ind1)
+function crossover(index1, index2)
+    size = length(index1)
     randomIndex = floor(Int64, rand() * size)
-    return crossoverAtIndex(ind1, ind2, randomIndex)
+    return crossoverAtIndex(index1, index2, randomIndex)
 end
 
 """
-    crossover(ind1, ind2, index)
+    crossover(index1, index2, index)
 
 Perform a crossover at a particular index
 """
-function crossoverAtIndex(ind1, ind2, index)
-    return vcat(ind1[1:index], ind2[index + 1:length(ind2)])
+function crossoverAtIndex(index1, index2, index)
+    return vcat(index1[1:index], index2[index + 1:length(index2)])
 end
 
 """
@@ -57,10 +57,10 @@ end
 
 Perform a mutation operation on the provided individual
 """
-function mutate(createGene, ind)
-    size = length(ind)
-    randomIndex = floor(Int64, rand() * size + 1)
-    return mutateAtIndex(createGene, ind, randomIndex)
+function mutate(gene_factory::Function, individual)
+    size = length(individual)
+    randomIndex::Int64 = floor(Int64, rand() * size + 1)
+    return mutateAtIndex(gene_factory, individual, randomIndex)
 end
 
 """
@@ -68,9 +68,9 @@ end
 
 Perform a mutation operation on the provided individual, at a provided index
 """
-function mutateAtIndex(createGene, ind, index)
-    t = copy(ind)
-    t[index] = createGene()
+function mutateAtIndex(gene_factory::Function, individual, index::Int64)
+    t = copy(individual)
+    t[index] = gene_factory(index)
     return t
 end
 
@@ -98,9 +98,8 @@ end
 Pick best individual of a given population.
 """
 function pickBestIndividual(fitness, population)
-    indexMaxFitness = argmin(map(fitness, population))
-    bestIndividual = population[indexMaxFitness]
-    return bestIndividual
+    indexMinFitness = argmin(map(fitness, population))
+    return population[indexMinFitness]
 end
 
 """
@@ -111,22 +110,16 @@ Selection using the tournament of size k. Assume that the smallest fitness is th
 function selectIndividual(fitness, population; k=5)
     populationSize = length(population)
     selectedIndividuals = []
-    for tmp in 1:k
+    for _ in 1:k
         anInd = population[floor(Int64, rand()*populationSize) + 1]
         push!(selectedIndividuals, anInd)
     end
     return pickBestIndividual(fitness, selectedIndividuals)
 end
 
-function gaLog(aString::String, shouldLog=true; color=:blue)
-    if(shouldLog)
-        printstyled(aString, color=color)
-    end
-end
+gaLog(aString::String, shouldLog=true; color=:blue) = shouldLog && printstyled(aString, color=color)
 
-function default_termination_function(bestFitnesses)
-    return false
-end
+default_termination_function(bestFitnesses) = false
 
 function should_continue_evolution(bestFitnesses::Vector{Number}, condition_termination::Function)
     isempty(bestFitnesses) && return true
@@ -146,7 +139,7 @@ julia> runGA(maxNumberOfIterations=40)
 """
 function runGA(
     fitness::Function,
-    createGene::Function,
+    gene_factory::Function,
     numberOfGenes::Int64;
 
     maxNumberOfIterations=10,
@@ -154,11 +147,12 @@ function runGA(
     seed=42,
     logging=true,
     filename="",
-    condition_termination::Function=default_termination_function
+    condition_termination::Function=default_termination_function,
+    population_size::Int64 = 10
 )
     gaLog("BEGINNING - GA commit date 2022-01-23 - 15:59pm\n", logging; color=:red)
     Random.seed!(seed)
-    population = createPopulation(createGene, numberOfGenes)
+    population = createPopulation(population_size, gene_factory, numberOfGenes)
     numberOfIndividuals = length(population)
     bestFitnesses = Number[]
     worstFitnesses = Number[]
@@ -171,11 +165,11 @@ function runGA(
         gaLog("Begining of iteration = $(iteration)/$(maxNumberOfIterations) ... ", logging)
         newPopulation = []
         for it in 1:numberOfIndividuals
-            ind1 = selectIndividual(fitness, population)
-            ind2 = selectIndividual(fitness, population)
-            newIndividual = crossover(ind1, ind2)
+            index1 = selectIndividual(fitness, population)
+            index2 = selectIndividual(fitness, population)
+            newIndividual = crossover(index1, index2)
             if (rand() <= probMutation)
-                newIndividual = mutate(createGene, newIndividual)
+                newIndividual = mutate(gene_factory, newIndividual)
             end
             push!(newPopulation, newIndividual)
         end

@@ -10,7 +10,7 @@ createGene()
 
 Create a gene value
 """
-function createGeneExample()
+function createGeneExample(index::Int64)
     return floor(Int, rand() * 10)
 end
 
@@ -35,6 +35,12 @@ end
 
 @test selectIndividual(fitnessExample, [[3, 2, 1, 4, 5], reverse(collect(1:5)), 1:5]) == 1:5
 @test selectIndividual(fitnessExample, [[3, 2, 1, 4, 5], reverse(collect(1:5))]) == [3, 2, 1, 4, 5]
+
+Random.seed!(42)
+@test createGeneExample(0) == 6
+@test createGeneExample(0) == 4
+@test createGeneExample(0) == 4
+
 
 numberOfFitnessEvaluation = 0
 @test runGA(fitnessExample, createGeneExample, 5, maxNumberOfIterations=200, logging=false)[1] == [1, 2, 3, 4, 5]

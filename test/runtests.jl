@@ -6,11 +6,15 @@ using Test, GeneticAlgorithm
 @test crossoverAtIndex([1, 2, 3, 4], [10, 20, 30, 40], 4) == [1, 2, 3, 4]
 
 @testset "Example1" begin
-    include("runtests_example01.jl")
+    include("example01.jl")
 end
 
 @testset "Example2" begin
-    include("runtests_example02.jl")
+    include("example02.jl")
+end
+
+@testset "Example3" begin
+    include("example03.jl")
 end
 
 #= msg = "!! ALL DONE !!"
